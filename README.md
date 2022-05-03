@@ -1,2 +1,2 @@
-# android-notes
+# Notes
 Notes app for android.
