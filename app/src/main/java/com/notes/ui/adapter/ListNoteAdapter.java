@@ -14,7 +14,7 @@ import com.notes.model.Note;
 
 import java.util.List;
 
-public class ListNoteAdapter extends RecyclerView.Adapter {
+public class ListNoteAdapter extends RecyclerView.Adapter<ListNoteAdapter.NoteViewHolder> {
 
     private final Context context;
     private final List<Note> notes;
@@ -26,18 +26,15 @@ public class ListNoteAdapter extends RecyclerView.Adapter {
 
     @NonNull
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public ListNoteAdapter.NoteViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View viewCreated = LayoutInflater.from(context).inflate(R.layout.item_note, parent, false);
         return new NoteViewHolder(viewCreated);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ListNoteAdapter.NoteViewHolder holder, int position) {
         final Note note = notes.get(position);
-        final TextView title = holder.itemView.findViewById(R.id.item_note_title);
-        final TextView content = holder.itemView.findViewById(R.id.item_note_content);
-        title.setText(note.getTitle());
-        content.setText(note.getContent());
+        holder.bind(note);
     }
 
     @Override
@@ -45,10 +42,20 @@ public class ListNoteAdapter extends RecyclerView.Adapter {
         return notes.size();
     }
 
-    private static class NoteViewHolder extends RecyclerView.ViewHolder {
+    static class NoteViewHolder extends RecyclerView.ViewHolder {
+
+        private final TextView title;
+        private final TextView content;
 
         public NoteViewHolder(@NonNull View itemView) {
             super(itemView);
+            this.title = itemView.findViewById(R.id.item_note_title);
+            this.content = itemView.findViewById(R.id.item_note_content);
+        }
+
+        public void bind(Note note) {
+            this.title.setText(note.getTitle());
+            this.content.setText(note.getContent());
         }
     }
 }

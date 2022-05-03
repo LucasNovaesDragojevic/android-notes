@@ -21,10 +21,17 @@ public class ListNoteActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         super.setContentView(R.layout.activity_list_note);
-        final RecyclerView notesRecyclerView = findViewById(R.id.activity_list_note_recycler_view);
         final List<Note> notes = noteDao.readAll();
-        notesRecyclerView.setAdapter(new ListNoteAdapter(this, notes));
-        final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
-        notesRecyclerView.setLayoutManager(linearLayoutManager);
+        this.configRecyclerView(notes);
+    }
+
+    private void configRecyclerView(List<Note> notes) {
+        final RecyclerView notesRecyclerView = findViewById(R.id.activity_list_note_recycler_view);
+        this.configAdapter(notes, notesRecyclerView);
+    }
+
+    private void configAdapter(List<Note> notes, RecyclerView notesRecyclerView) {
+        final ListNoteAdapter listNoteAdapter = new ListNoteAdapter(this, notes);
+        notesRecyclerView.setAdapter(listNoteAdapter);
     }
 }
