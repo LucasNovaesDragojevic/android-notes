@@ -1,14 +1,15 @@
 package com.notes.ui.activity;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Bundle;
-import android.widget.ListView;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.notes.R;
 import com.notes.dao.NoteDao;
 import com.notes.model.Note;
-import com.notes.ui.activity.adapter.ListNoteAdapter;
+import com.notes.ui.adapter.ListNoteAdapter;
 
 import java.util.List;
 
@@ -20,8 +21,10 @@ public class ListNoteActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         super.setContentView(R.layout.activity_list_note);
-        final ListView notesListView = findViewById(R.id.activity_list_note_view);
+        final RecyclerView notesRecyclerView = findViewById(R.id.activity_list_note_recycler_view);
         final List<Note> notes = noteDao.readAll();
-        notesListView.setAdapter(new ListNoteAdapter(this, notes));
+        notesRecyclerView.setAdapter(new ListNoteAdapter(this, notes));
+        final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        notesRecyclerView.setLayoutManager(linearLayoutManager);
     }
 }

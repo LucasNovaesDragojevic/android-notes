@@ -6,8 +6,8 @@
     android:layout_height="match_parent"
     tools:context=".ui.activity.ListNoteActivity">
 
-    <ListView
-        android:id="@+id/activity_list_note_view"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/activity_list_note_recycler_view"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintBottom_toTopOf="@id/activity_list_note_new_note"
@@ -16,7 +16,8 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:listitem="@layout/item_note" />
 
-    <View android:id="@+id/activity_list_note_new_note_shadow"
+    <View
+        android:id="@+id/activity_list_note_new_note_shadow"
         android:layout_width="0dp"
         android:layout_height="5dp"
         android:background="@drawable/gradient_background"
