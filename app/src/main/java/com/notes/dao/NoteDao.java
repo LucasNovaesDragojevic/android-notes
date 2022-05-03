@@ -11,7 +11,7 @@ public class NoteDao {
     private static final List<Note> NOTES = new ArrayList<>();
 
     static {
-        for (int i = 0; i < 10000; i++) {
+        for (int i = 0; i < 2; i++) {
             NOTES.add(new Note("Title " + i, "Description " + i));
         }
     }

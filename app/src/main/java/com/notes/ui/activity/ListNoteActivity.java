@@ -1,6 +1,8 @@
 package com.notes.ui.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -23,6 +25,11 @@ public class ListNoteActivity extends AppCompatActivity {
         super.setContentView(R.layout.activity_list_note);
         final List<Note> notes = noteDao.readAll();
         this.configRecyclerView(notes);
+        final View btnNewNote = super.findViewById(R.id.activity_list_note_new_note);
+        btnNewNote.setOnClickListener((view) -> {
+            final Intent intent = new Intent(this, FormNoteActivity.class);
+            super.startActivity(intent);
+        });
     }
 
     private void configRecyclerView(List<Note> notes) {
@@ -33,5 +40,12 @@ public class ListNoteActivity extends AppCompatActivity {
     private void configAdapter(List<Note> notes, RecyclerView notesRecyclerView) {
         final ListNoteAdapter listNoteAdapter = new ListNoteAdapter(this, notes);
         notesRecyclerView.setAdapter(listNoteAdapter);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        final List<Note> notes = noteDao.readAll();
+        configRecyclerView(notes);
     }
 }
