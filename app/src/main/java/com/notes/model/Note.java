@@ -1,9 +1,10 @@
 package com.notes.model;
 
+import java.io.Serializable;
 import java.util.Objects;
 import java.util.UUID;
 
-public class Note {
+public class Note implements Serializable {
 
     private final String uuid = UUID.randomUUID().toString();
     private final String title;

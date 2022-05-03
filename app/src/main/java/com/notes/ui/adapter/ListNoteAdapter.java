@@ -1,6 +1,7 @@
 package com.notes.ui.adapter;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,6 +41,11 @@ public class ListNoteAdapter extends RecyclerView.Adapter<ListNoteAdapter.NoteVi
     @Override
     public int getItemCount() {
         return notes.size();
+    }
+
+    public void addNote(Note note) {
+        notes.add(note);
+        notifyItemInserted(notes.size() + 1);
     }
 
     static class NoteViewHolder extends RecyclerView.ViewHolder {
