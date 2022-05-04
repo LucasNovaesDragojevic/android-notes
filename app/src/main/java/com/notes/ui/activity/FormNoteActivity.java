@@ -2,12 +2,14 @@ package com.notes.ui.activity;
 
 import static com.notes.enumerator.ApplicationConstants.NOTE;
 import static com.notes.enumerator.ApplicationConstants.NOTE_CREATED;
+import static com.notes.enumerator.ApplicationConstants.POSITION;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -17,10 +19,21 @@ import com.notes.model.Note;
 
 public class FormNoteActivity extends AppCompatActivity {
 
+    private Integer position;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         super.setContentView(R.layout.activity_form_note);
+        final Intent intent = super.getIntent();
+        if (intent.hasExtra(NOTE.name()) && intent.hasExtra(POSITION.name())) {
+            final Note note = (Note) intent.getSerializableExtra(NOTE.name());
+            position = intent.getIntExtra(POSITION.name(), -1);
+            final TextView titleTextView = super.findViewById(R.id.activity_form_note_title);
+            final TextView contentTextView = super.findViewById(R.id.activity_form_note_content);
+            titleTextView.setText(note.getTitle());
+            contentTextView.setText(note.getContent());
+        }
     }
 
     @Override
@@ -42,6 +55,7 @@ public class FormNoteActivity extends AppCompatActivity {
     private void returnNote(Note note) {
         final Intent intent = new Intent();
         intent.putExtra(NOTE.name(), note);
+        intent.putExtra(POSITION.name(), position);
         super.setResult(NOTE_CREATED.ordinal(), intent);
     }
 

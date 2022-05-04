@@ -5,11 +5,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.notes.R;
+import com.notes.function.OnItemClickListener;
 import com.notes.model.Note;
 
 import java.util.List;
@@ -18,10 +20,15 @@ public class ListNoteAdapter extends RecyclerView.Adapter<ListNoteAdapter.NoteVi
 
     private final Context context;
     private final List<Note> notes;
+    private OnItemClickListener onItemClickListener;
 
     public ListNoteAdapter(Context context, List<Note> notes) {
         this.context = context;
         this.notes = notes;
+    }
+
+    public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
+        this.onItemClickListener = onItemClickListener;
     }
 
     @NonNull
@@ -47,18 +54,26 @@ public class ListNoteAdapter extends RecyclerView.Adapter<ListNoteAdapter.NoteVi
         notifyItemInserted(notes.size() + 1);
     }
 
-    static class NoteViewHolder extends RecyclerView.ViewHolder {
+    public void update(Integer position, Note note) {
+        notes.set(position, note);
+        notifyItemChanged(position, note);
+    }
+
+    class NoteViewHolder extends RecyclerView.ViewHolder {
 
         private final TextView title;
         private final TextView content;
+        private Note note;
 
         public NoteViewHolder(@NonNull View itemView) {
             super(itemView);
             this.title = itemView.findViewById(R.id.item_note_title);
             this.content = itemView.findViewById(R.id.item_note_content);
+            itemView.setOnClickListener(view -> onItemClickListener.run(note, super.getAdapterPosition()));
         }
 
         public void bind(Note note) {
+            this.note = note;
             this.title.setText(note.getTitle());
             this.content.setText(note.getContent());
         }

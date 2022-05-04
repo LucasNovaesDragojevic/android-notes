@@ -1,12 +1,15 @@
 package com.notes.ui.activity;
 
 import static com.notes.enumerator.ApplicationConstants.CREATE_NOTE;
+import static com.notes.enumerator.ApplicationConstants.EDIT_NOTE;
 import static com.notes.enumerator.ApplicationConstants.NOTE;
 import static com.notes.enumerator.ApplicationConstants.NOTE_CREATED;
+import static com.notes.enumerator.ApplicationConstants.POSITION;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -44,6 +47,13 @@ public class ListNoteActivity extends AppCompatActivity {
 
         if (isResultWithNewNote(requestCode, resultCode, data))
             this.createAndAddNote(data);
+
+        if (requestCode == EDIT_NOTE.ordinal() && isResultNoteCreated(resultCode) && hasNote(data) && data.hasExtra(POSITION.name())) {
+            final Note note = (Note) data.getSerializableExtra(NOTE.name());
+            final int position = data.getIntExtra(POSITION.name(), -1);
+            noteDao.update(position, note);
+            listNoteAdapter.update(position, note);
+        }
     }
 
     private void createAndAddNote(@NonNull Intent data) {
@@ -76,6 +86,12 @@ public class ListNoteActivity extends AppCompatActivity {
     private void configAdapter(List<Note> notes, RecyclerView notesRecyclerView) {
         listNoteAdapter = new ListNoteAdapter(this, notes);
         notesRecyclerView.setAdapter(listNoteAdapter);
+        listNoteAdapter.setOnItemClickListener((note, position) -> {
+            final Intent intent = new Intent(this, FormNoteActivity.class);
+            intent.putExtra(NOTE.name(), note);
+            intent.putExtra(POSITION.name(), position);
+            startActivityForResult(intent, EDIT_NOTE.ordinal());
+        });
     }
 
     private void configButtonNewNote() {
