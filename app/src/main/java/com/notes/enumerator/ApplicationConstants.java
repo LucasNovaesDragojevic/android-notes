@@ -5,6 +5,7 @@ public enum ApplicationConstants {
     CREATE_NOTE,
     EDIT_NOTE,
     NOTE,
-    NOTE_CREATED,
-    POSITION
+    POSITION;
+
+    public static final Integer INVALID_POSITION = -1;
 }

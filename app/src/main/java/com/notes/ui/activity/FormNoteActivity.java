@@ -1,7 +1,7 @@
 package com.notes.ui.activity;
 
+import static com.notes.enumerator.ApplicationConstants.INVALID_POSITION;
 import static com.notes.enumerator.ApplicationConstants.NOTE;
-import static com.notes.enumerator.ApplicationConstants.NOTE_CREATED;
 import static com.notes.enumerator.ApplicationConstants.POSITION;
 
 import android.content.Intent;
@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -19,20 +18,20 @@ import com.notes.model.Note;
 
 public class FormNoteActivity extends AppCompatActivity {
 
-    private Integer position;
+    private Integer position = INVALID_POSITION;
+    private EditText titleEditText;
+    private EditText contentEditText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         super.setContentView(R.layout.activity_form_note);
+        this.configEditTexts();
         final Intent intent = super.getIntent();
-        if (intent.hasExtra(NOTE.name()) && intent.hasExtra(POSITION.name())) {
+        if (intent.hasExtra(NOTE.name())) {
             final Note note = (Note) intent.getSerializableExtra(NOTE.name());
-            position = intent.getIntExtra(POSITION.name(), -1);
-            final TextView titleTextView = super.findViewById(R.id.activity_form_note_title);
-            final TextView contentTextView = super.findViewById(R.id.activity_form_note_content);
-            titleTextView.setText(note.getTitle());
-            contentTextView.setText(note.getContent());
+            position = intent.getIntExtra(POSITION.name(), INVALID_POSITION);
+            this.fillEditTexts(note);
         }
     }
 
@@ -40,6 +39,16 @@ public class FormNoteActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         super.getMenuInflater().inflate(R.menu.menu_form_note_save, menu);
         return super.onCreateOptionsMenu(menu);
+    }
+
+    private void configEditTexts() {
+        titleEditText  = super.findViewById(R.id.activity_form_note_title);
+        contentEditText = super.findViewById(R.id.activity_form_note_content);
+    }
+
+    private void fillEditTexts(Note note) {
+        titleEditText.setText(note.getTitle());
+        contentEditText.setText(note.getContent());
     }
 
     @Override
@@ -56,13 +65,11 @@ public class FormNoteActivity extends AppCompatActivity {
         final Intent intent = new Intent();
         intent.putExtra(NOTE.name(), note);
         intent.putExtra(POSITION.name(), position);
-        super.setResult(NOTE_CREATED.ordinal(), intent);
+        super.setResult(RESULT_OK, intent);
     }
 
     @NonNull
     private Note createNote() {
-        final EditText titleEditText = super.findViewById(R.id.activity_form_note_title);
-        final EditText contentEditText = super.findViewById(R.id.activity_form_note_content);
         return new Note(titleEditText.getText().toString(), contentEditText.getText().toString());
     }
 

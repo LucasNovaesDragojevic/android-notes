@@ -2,8 +2,8 @@ package com.notes.ui.activity;
 
 import static com.notes.enumerator.ApplicationConstants.CREATE_NOTE;
 import static com.notes.enumerator.ApplicationConstants.EDIT_NOTE;
+import static com.notes.enumerator.ApplicationConstants.INVALID_POSITION;
 import static com.notes.enumerator.ApplicationConstants.NOTE;
-import static com.notes.enumerator.ApplicationConstants.NOTE_CREATED;
 import static com.notes.enumerator.ApplicationConstants.POSITION;
 
 import android.content.Intent;
@@ -45,15 +45,41 @@ public class ListNoteActivity extends AppCompatActivity {
         if (data == null)
             return;
 
-        if (isResultWithNewNote(requestCode, resultCode, data))
-            this.createAndAddNote(data);
+        if (isResultWithNewNote(requestCode, data))
+            if (isResultOk(resultCode))
+                this.createAndAddNote(data);
 
-        if (requestCode == EDIT_NOTE.ordinal() && isResultNoteCreated(resultCode) && hasNote(data) && data.hasExtra(POSITION.name())) {
-            final Note note = (Note) data.getSerializableExtra(NOTE.name());
-            final int position = data.getIntExtra(POSITION.name(), -1);
-            noteDao.update(position, note);
-            listNoteAdapter.update(position, note);
+        if (isResultToUpdateNote(requestCode, data)) {
+            if (isResultOk(resultCode)) {
+                final Note note = (Note) data.getSerializableExtra(NOTE.name());
+                final Integer position = data.getIntExtra(POSITION.name(), INVALID_POSITION);
+                if (isValidPosition(position))
+                    this.updateDaoAndAdapter(note, position);
+                else
+                    this.notifyUserAboutProblem();
+            }
         }
+    }
+
+    private void notifyUserAboutProblem() {
+        Toast.makeText(this, "Problem encountered when update note.", Toast.LENGTH_SHORT).show();
+    }
+
+    private void updateDaoAndAdapter(Note note, Integer position) {
+        noteDao.update(position, note);
+        listNoteAdapter.update(position, note);
+    }
+
+    private boolean isValidPosition(Integer position) {
+        return !position.equals(INVALID_POSITION);
+    }
+
+    private boolean isResultToUpdateNote(int requestCode, @NonNull Intent data) {
+        return isRequestToEditNote(requestCode) && hasNote(data);
+    }
+
+    private boolean isRequestToEditNote(int requestCode) {
+        return requestCode == EDIT_NOTE.ordinal();
     }
 
     private void createAndAddNote(@NonNull Intent data) {
@@ -62,16 +88,16 @@ public class ListNoteActivity extends AppCompatActivity {
         listNoteAdapter.addNote(note);
     }
 
-    private boolean isResultWithNewNote(int requestCode, int resultCode, @NonNull Intent data) {
-        return isRequestToCreateNote(requestCode) && isResultNoteCreated(resultCode) && hasNote(data);
+    private boolean isResultWithNewNote(int requestCode, @NonNull Intent data) {
+        return isRequestToCreateNote(requestCode) && hasNote(data);
     }
 
     private boolean hasNote(@NonNull Intent data) {
         return data.hasExtra(NOTE.name());
     }
 
-    private boolean isResultNoteCreated(int resultCode) {
-        return resultCode == NOTE_CREATED.ordinal();
+    private boolean isResultOk(int resultCode) {
+        return resultCode == RESULT_OK;
     }
 
     private boolean isRequestToCreateNote(int requestCode) {
@@ -86,19 +112,23 @@ public class ListNoteActivity extends AppCompatActivity {
     private void configAdapter(List<Note> notes, RecyclerView notesRecyclerView) {
         listNoteAdapter = new ListNoteAdapter(this, notes);
         notesRecyclerView.setAdapter(listNoteAdapter);
-        listNoteAdapter.setOnItemClickListener((note, position) -> {
-            final Intent intent = new Intent(this, FormNoteActivity.class);
-            intent.putExtra(NOTE.name(), note);
-            intent.putExtra(POSITION.name(), position);
-            startActivityForResult(intent, EDIT_NOTE.ordinal());
-        });
+        listNoteAdapter.setOnItemClickListener(this::goToFormNoteActivityToEdit);
     }
 
     private void configButtonNewNote() {
         final View btnNewNote = super.findViewById(R.id.activity_list_note_new_note);
-        btnNewNote.setOnClickListener((view) -> {
-            final Intent intent = new Intent(this, FormNoteActivity.class);
-            super.startActivityForResult(intent, CREATE_NOTE.ordinal());
-        });
+        btnNewNote.setOnClickListener(view -> this.goToFormNoteActivityToCreate());
+    }
+
+    private void goToFormNoteActivityToCreate() {
+        final Intent intent = new Intent(this, FormNoteActivity.class);
+        super.startActivityForResult(intent, CREATE_NOTE.ordinal());
+    }
+
+    private void goToFormNoteActivityToEdit(Note note, Integer position) {
+        final Intent intent = new Intent(this, FormNoteActivity.class);
+        intent.putExtra(NOTE.name(), note);
+        intent.putExtra(POSITION.name(), position);
+        startActivityForResult(intent, EDIT_NOTE.ordinal());
     }
 }
