@@ -1,5 +1,8 @@
 package com.notes.ui.activity;
 
+import static com.notes.enumerator.ApplicationConstants.NOTE;
+import static com.notes.enumerator.ApplicationConstants.NOTE_CREATED;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -28,15 +31,28 @@ public class FormNoteActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == R.id.menu_form_note_ic_save) {
-            final EditText titleEditText = super.findViewById(R.id.activity_form_note_title);
-            final EditText contentEditText = super.findViewById(R.id.activity_form_note_content);
-            final Note note = new Note(titleEditText.getText().toString(), contentEditText.getText().toString());
-            final Intent intent = new Intent();
-            intent.putExtra("note", note);
-            super.setResult(2, intent);
+        if (isSaveNoteMenu(item)) {
+            final Note note = this.createNote();
+            this.returnNote(note);
             super.finish();
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void returnNote(Note note) {
+        final Intent intent = new Intent();
+        intent.putExtra(NOTE.name(), note);
+        super.setResult(NOTE_CREATED.ordinal(), intent);
+    }
+
+    @NonNull
+    private Note createNote() {
+        final EditText titleEditText = super.findViewById(R.id.activity_form_note_title);
+        final EditText contentEditText = super.findViewById(R.id.activity_form_note_content);
+        return new Note(titleEditText.getText().toString(), contentEditText.getText().toString());
+    }
+
+    private Boolean isSaveNoteMenu(@NonNull MenuItem item) {
+        return item.getItemId() == R.id.menu_form_note_ic_save;
     }
 }
