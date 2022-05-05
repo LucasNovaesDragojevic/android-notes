@@ -32,6 +32,10 @@ public class NoteDao {
         NOTES.remove(note);
     }
 
+    public void delete(int position) {
+        NOTES.remove(position);
+    }
+
     public void swap(Integer initialPosition, Integer finalPosition) {
         Collections.swap(NOTES, initialPosition,finalPosition);
     }
