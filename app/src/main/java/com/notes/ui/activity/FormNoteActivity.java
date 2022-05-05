@@ -26,9 +26,11 @@ public class FormNoteActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         super.setContentView(R.layout.activity_form_note);
+        super.setTitle("New note");
         this.configEditTexts();
         final Intent intent = super.getIntent();
         if (intent.hasExtra(NOTE.name())) {
+            super.setTitle("Edit note");
             final Note note = (Note) intent.getSerializableExtra(NOTE.name());
             position = intent.getIntExtra(POSITION.name(), INVALID_POSITION);
             this.fillEditTexts(note);
