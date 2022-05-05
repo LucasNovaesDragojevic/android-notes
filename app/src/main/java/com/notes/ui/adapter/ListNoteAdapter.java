@@ -14,6 +14,7 @@ import com.notes.R;
 import com.notes.function.OnItemClickListener;
 import com.notes.model.Note;
 
+import java.util.Collections;
 import java.util.List;
 
 public class ListNoteAdapter extends RecyclerView.Adapter<ListNoteAdapter.NoteViewHolder> {
@@ -62,6 +63,11 @@ public class ListNoteAdapter extends RecyclerView.Adapter<ListNoteAdapter.NoteVi
     public void remove(int notePosition) {
         notes.remove(notePosition);
         notifyItemRemoved(notePosition);
+    }
+
+    public void swap(int initialPosition, int finalPosition) {
+        Collections.swap(notes, initialPosition,finalPosition);
+        notifyItemMoved(initialPosition, finalPosition);
     }
 
     class NoteViewHolder extends RecyclerView.ViewHolder {

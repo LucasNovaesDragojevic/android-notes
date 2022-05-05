@@ -109,6 +109,10 @@ public class ListNoteActivity extends AppCompatActivity {
     private void configRecyclerView(List<Note> notes) {
         final RecyclerView notesRecyclerView = super.findViewById(R.id.activity_list_note_recycler_view);
         this.configAdapter(notes, notesRecyclerView);
+        this.configItemTouchHelper(notesRecyclerView);
+    }
+
+    private void configItemTouchHelper(RecyclerView notesRecyclerView) {
         final ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new NoteItemTouchHelperCallback(listNoteAdapter, noteDao));
         itemTouchHelper.attachToRecyclerView(notesRecyclerView);
     }
